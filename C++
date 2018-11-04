@@ -1,0 +1,93 @@
+#include <string>
+#include <iostream>
+using namespace std;
+float expr();
+float skobki();
+float factor();
+
+float number() { // Берём и считываем каждый символ.
+	int resultat = 0; // то что до запятой
+	int postResultat = 0; // то что после запятой
+	int aGdeTo4kaBlya = 1; // Ну просто где запятая. Можно удалить.
+	float jopa; // Вывод искомый.
+	bool metka = false; // Систем метка. Объяснить, зачем она - НЕВОЗМОЖНО! 
+	while (1) {
+		char c = cin.get();
+		if ((c >= '0' && c <= '9') || (c == 46)) { // Проверяем каждый символ на то, что это 
+
+			if ((c == 46) && (metka == false)){ 
+				metka = true;
+				continue;
+			}
+
+			if (metka == false) // Считываем то, шо до запятой
+				resultat = resultat * 10 + c - '0';
+			if (metka == true) // Считываем то, шо после запятой
+				postResultat = postResultat * 10 + c - '0';
+			
+		}else{
+			cin.putback(c);
+			jopa = (float)resultat + ((float)postResultat / (float)(postResultat == 0 ? 1 : int(log10(postResultat) + 1)));
+			//cout << "То самое float: " << jopa << endl;
+			//cout << "То, что до запятой: " << (float)resultat << endl;
+			//cout << "То, что после запятой" << (float)postResultat << endl;
+			//cout << "А сколько цифр в числе после запятой? Ответ: " << (float)(postResultat == 0 ? 1 : int(log10(postResultat) + 1)) << endl;
+			return jopa;
+		}
+	} 
+}
+
+float expr() { // Проверка на знак.
+	float x = factor();
+	while (1) {
+		char c = cin.get();
+		switch (c) {
+		case '+':
+			x += factor();
+			break;
+		case '-':
+			x -= factor();
+			break;
+		default:
+			cin.putback(c);
+			return x;
+		}
+	}
+}
+
+float skobki() { // Работа со скобками.
+	char c = cin.get();
+	if (c == '(') {
+		float x = expr();
+		cin.get();
+		return x;
+	}
+	else {
+		cin.putback(c);
+		return number();
+	}
+}
+
+float factor() { // Проверка на знак.
+	float x = skobki();
+	while (1) {
+		char c = cin.get();
+		switch (c) {
+		case '*':
+			x *= skobki();
+			break;
+		case '/':
+			x /= skobki();
+			break;
+		default:
+			cin.putback(c);
+			return x;
+		}
+	}
+}
+
+int main() {
+	cout << "Input: ";
+	cout << "OutPut: " << expr() << endl;
+	system("pause");
+}
